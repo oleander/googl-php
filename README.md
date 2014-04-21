@@ -1,6 +1,6 @@
 # Googl
 
-Google URL Shortener API in PHP
+Google URL shortener API in PHP
 
 ## Usage
 
