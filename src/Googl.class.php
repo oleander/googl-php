@@ -1,6 +1,8 @@
 <?php 
 
-class Googl {
+namespace Googl;
+
+class Base {
   private $username;
   private $password;
   private $token;
@@ -16,11 +18,7 @@ class Googl {
 
   #
   # @url String URL to be shorten
-  # @return Array (
-  #   [kind] => urlshortener#url
-  #   [id] => http://goo.gl/njUr95
-  #   [longUrl] => http://google.com/
-  # )
+  # @return Url
   #
   public function shorten($url){
     if(!$this->isLoggedIn()){
@@ -38,23 +36,36 @@ class Googl {
       "longUrl" => $url
     )));
 
-    return json_decode(curl_exec($curl), true);
+    $result = json_decode(curl_exec($curl), true);
+
+    if(!isset($result["id"])){
+      throw new \Exception("Short url could not be created");
+    }
+
+    return new Url(array(
+      "short" => $result["id"],
+      "original" => $result["longUrl"]
+    ));
   }
 
   #
   # @url String Goo.gl url to be expand
-  # @return Array (
-  #   [kind] => urlshortener#url
-  #   [id] => http://goo.gl/njUr95
-  #   [longUrl] => http://google.com/
-  #   [status] => OK
-  # )
+  # @return Url
   #
   public static function expand($url) {
     $curl = curl_init("https://www.googleapis.com/urlshortener/v1/url?shortUrl=$url");
     curl_setopt($curl, CURLOPT_HEADER, false);
     curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-    return json_decode(curl_exec($curl), true);
+    $result = json_decode(curl_exec($curl), true);
+
+    if($result["status"] != "OK"){
+      throw new \Exception("URL could not be expand");
+    }
+
+    return new Url(array(
+      "short" => $result["id"],
+      "original" => $result["longUrl"]
+    ));
   }
 
   private function isLoggedIn(){
@@ -82,8 +93,18 @@ class Googl {
 
     if($this->token == "BadAuthentication"){
       $this->token = null;
-      throw new Exception("Wrong username or password");
+      throw new \Exception("Wrong username or password");
     }
+  }
+}
+
+class Url {
+  public $original;
+  public $short;
+
+  public function __construct($result){
+    $this->original = $result["original"];
+    $this->short = $result["short"];
   }
 }
 ?>
