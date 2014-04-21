@@ -7,12 +7,9 @@ Google URL Shortener API in PHP
 ### Shorten url
 
 ``` php
-require_once("Googl.class.php");
-$client = new Googl("username@gmail.com", "password");
-$short = $client->shorten("http://www.bbc.co.uk/");
-if(isset($short["id"])){
-  echo $short["id"]; # => "http://goo.gl/wZts"
-}
+$client = new Googl\Base("username@gmail.com", "password");
+$url = $client->shorten("http://www.bbc.co.uk/");
+echo $url->short; # => "http://goo.gl/wZts"
 ```
 
 Your url should now be visible at [http://goo.gl/](http://goo.gl/).
@@ -20,24 +17,32 @@ Your url should now be visible at [http://goo.gl/](http://goo.gl/).
 ### Expand url
 
 ``` php
-require_once("Googl.class.php");
-$long = Googl::expand("http://goo.gl/wZts");
-if($long["status"] == "OK"){
-  echo long["longUrl"]; # => "http://www.bbc.co.uk/"
-}
+$long = Googl\Base::expand("http://goo.gl/wZts");
+echo $url->original; # => "http://www.bbc.co.uk/"
 ```
 
 ## Install
 
-    git clone https://github.com/oleander/googl-php
+### Without Composer
 
-### Composer
+Clone the project using `git clone https://github.com/oleander/googl-php` 
+and include the source file with `require_once("googl-php/src/Googl.class.php");`
+
+### With Composer
+
+Add the following json to your `composer.json` file and run `composer update`.
 
     {
-        "require" : {
-            "oleander/googl" : "1.*"
-        }
+      "require" : {
+        "oleander/googl" : "1.*"
+      }
     }
+
+## Test
+
+Tests can be found in the `tests` folder and executed by running
+`USER="username@gmail.com" PASSWORD="gmail-password" phpunit`. Don't
+forget to run `composer update` before you run the test suite.
 
 ## Contributing
 
