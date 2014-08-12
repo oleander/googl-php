@@ -34,7 +34,7 @@ Add the following json to your `composer.json` file and run `composer update`.
 
     {
       "require" : {
-        "oleander/googl" : "1.*"
+        "oleander/googl" : "dev-master"
       }
     }
 
